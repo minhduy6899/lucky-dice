@@ -14,7 +14,7 @@ const prizeHistoryRouter = require("./app/routes/prizeHistoryRouter");
 const voucherHistoryRouter = require("./app/routes/voucherHistoryRouter");
 
 // Import model
-const userModle = require("./app/models/userModel");
+const userModel = require("./app/models/userModel");
 const diceHistoryModel = require("./app/models/diceHistoryModel");
 const prizeModel = require("./app/models/prizeModel");
 const voucherModel = require("./app/models/voucherModel");
@@ -43,23 +43,25 @@ const port = 8000;
 // Connect to mongoDB
 mongoose.connect(
   "mongodb+srv://minhduy1:minhduy1@luckydise.6id8etc.mongodb.net/?retryWrites=true&w=majority&appName=luckydise",
+  { useNewUrlParser: true, useUnifiedTopology: true, tls: true },
   (err) => {
     if (err) {
-      throw err;
+      console.error("Failed to connect to MongoDB", err);
+      process.exit(1); // Exit the process if MongoDB connection fails
     }
-    console.log("Connect MongoDB successfully!");
+    console.log("Connected to MongoDB successfully!");
   }
 );
 
 // Console.log current time when send a request
-app.use((request, response, next) => {
-  console.log("Time", new Date());
+app.use((req, res, next) => {
+  console.log("Time:", new Date().toISOString());
   next();
 });
 
 // Console.log current method when send a request
-app.use((request, response, next) => {
-  console.log("Request method: ", request.method);
+app.use((req, res, next) => {
+  console.log("Request method:", req.method);
   next();
 });
 
@@ -69,14 +71,14 @@ app.get("/", (req, res) => {
 });
 
 // Use router middleware
-app.use("/", diceHistoryRouter);
-app.use("/", userRouter);
-app.use("/", prizeRouter);
-app.use("/", voucherRouter);
-app.use("/", prizeHistoryRouter);
-app.use("/", voucherHistoryRouter);
+app.use("/dice-history", diceHistoryRouter);
+app.use("/users", userRouter);
+app.use("/prizes", prizeRouter);
+app.use("/vouchers", voucherRouter);
+app.use("/prize-history", prizeHistoryRouter);
+app.use("/voucher-history", voucherHistoryRouter);
 
 // Run app express
 app.listen(port, () => {
-  console.log("App listening on port (Ứng dụng đang chạy trên cổng) " + port);
+  console.log(`App listening on port (Ứng dụng đang chạy trên cổng) ${port}`);
 });
